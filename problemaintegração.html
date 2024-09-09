@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estamos a 0 dias sem problemas de integração</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            max-width: 300px;
+            width: 100%;
+        }
+        .label {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .date {
+            font-size: 36px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="label">Estamos a</div>
+        <div class="date" id="dayCount">0 dias</div></br>
+        <div class="label">sem problemas de integração</div>
+        <button class="button" onclick="resetCounter()">Zerar Contador</button>
+        <div class="footer" id="footer">Atualizado em: <span id="date"></span> <span id="time"></span></div>
+    </div>
+
+    <script>
+        // Get the current date
+        function getToday() {
+            return new Date().toISOString().slice(0, 10);
+        }
+
+        // Update the date and time in the footer
+        function updateDateTime() {
+            const now = new Date();
+            const optionsDate = { day: '2-digit', month: 'long', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('pt-BR', optionsDate);
+            const formattedTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            document.getElementById('date').textContent = formattedDate;
+            document.getElementById('time').textContent = formattedTime;
+        }
+
+        // Update the day count
+        function updateDayCount() {
+            const today = getToday();
+            let lastResetDate = localStorage.getItem('lastResetDate');
+            let dayCount = parseInt(localStorage.getItem('dayCount')) || 0;
+
+            if (lastResetDate !== today) {
+                // Increment day count if a new day has passed
+                localStorage.setItem('lastResetDate', today);
+                localStorage.setItem('dayCount', dayCount + 1);
+                document.getElementById('dayCount').textContent = `${dayCount + 1} dias`;
+            } else {
+                document.getElementById('dayCount').textContent = `${dayCount} dias`;
+            }
+        }
+
+        // Reset the counter
+        function resetCounter() {
+            localStorage.setItem('dayCount', 0);
+            localStorage.setItem('lastResetDate', getToday());
+            document.getElementById('dayCount').textContent = '0 dias';
+        }
+
+        // Initial call to update date, time, and day count
+        updateDateTime();
+        updateDayCount();
+
+        // Update time every second
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+</html>
